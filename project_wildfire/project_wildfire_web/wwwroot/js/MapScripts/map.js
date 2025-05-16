@@ -1,12 +1,20 @@
 import { addAQIMarker } from './AQI.js';
 import { addFireMarkers } from './fireMarkers.js';
-import { getUserId } from './site.js'; // Import userId
-import { initDialogModal } from './saveLocationModalHandler.js'; // Import modal handler
+import { getUserId } from '../site.js'; // Import userId
+import { initDialogModal } from '../SaveLocationScripts/saveLocationModalHandler.js'; // Import modal handler
+import {addLegend } from './addLegend.js';
 
+// Track overridden statuses keyed by shelter ID
+const shelterStatusOverrides = {};
+
+const savedLocationMarkers = {}; // Tracks saved location markers
 document.addEventListener("DOMContentLoaded", function () {
     // Initialize Leaflet Map
     const map = initializeMap();
     window._leaflet_map = map;
+
+    // Exposes the map to be accessible from BDD tests
+    window.webfireMap = map; 
 
     // Base Layers
     const baseLayers = createBaseLayers();
@@ -61,8 +69,10 @@ document.addEventListener("DOMContentLoaded", function () {
             for (let location of savedLocations) {
                 console.log(location);
 
-                let marker = L.marker([location.latitude, location.longitude]).addTo(map);
+                let marker = L.marker([location.latitude, location.longitude], { locationId: location.id}).addTo(map);
+                savedLocationMarkers[location.id] = marker; // Store the marker in the savedLocations object
                 marker.bindPopup(location.title); // Bind the name to the marker popup
+                marker.getElement().id = location.title; // Set the marker ID to the location ID
             }
             map.on('click', function (e) {
                 addMarkerOnClick(e, map)
@@ -124,27 +134,29 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     document.addEventListener('click', function (e) {
-    const link = e.target.closest('.fire-jump');
-    if (link) {
-        e.preventDefault();
-        const lat = parseFloat(link.dataset.lat);
-        const lng = parseFloat(link.dataset.lng);
-        if (!isNaN(lat) && !isNaN(lng)) {
-            
-          window._leaflet_map.setView([lat, lng],13);
-            const fireId = parseInt(link.textContent.trim());
-          const marker = window.fireMarkerMap?.get(fireId);
-            if (marker) {
-                marker.fire('click');
+        const link = e.target.closest('.fire-jump');
+        if (link) {
+            e.preventDefault();
+            const lat = parseFloat(link.dataset.lat);
+            const lng = parseFloat(link.dataset.lng);
+            if (!isNaN(lat) && !isNaN(lng)) {
+                
+            window._leaflet_map.setView([lat, lng],13);
+                const fireId = parseInt(link.textContent.trim());
+            const marker = window.fireMarkerMap?.get(fireId);
+                if (marker) {
+                    marker.fire('click');
+                }
+            const modalElement = document.getElementById('profileModal')
+            if(modalElement && bootstrap){
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                if(modalInstance){
+                    modalInstance.hide()
+                }
             }
-          const modalElement = document.getElementById('profileModal')
-          if(modalElement && bootstrap){
-            const modalInstance = bootstrap.Modal.getInstance(modalElement);
-            if(modalInstance){
-                modalInstance.hide()
             }
-          }
         }
+<<<<<<< HEAD:project_wildfire/project_wildfire_web/wwwroot/js/map.js
     }
 });
 document.addEventListener('click', function(e){
@@ -165,6 +177,8 @@ document.addEventListener('click', function(e){
             })
             .catch(err => alert(err.message));
         }
+=======
+>>>>>>> dev:project_wildfire/project_wildfire_web/wwwroot/js/MapScripts/map.js
     });
 });
     
@@ -192,6 +206,18 @@ function addMarkerOnClick(e, map) {
     activeMarker.openPopup(); // Open the popup immediately
 
     initDialogModal(); // Initialize the modal handler
+}
+
+export function removeMarker(id) {
+    // Given the location ID it will remove the marker from the map.
+    const marker = savedLocationMarkers[id];
+    console.log("Removing marker:", marker);
+    if (marker) {
+        marker.remove(); // Remove the marker from the map
+        delete savedLocationMarkers[id]; // Remove from the savedLocations object
+    } else {
+        console.error(`Marker with title "${id}" not found.`);
+    }
 }
 
 // Spinner functions
@@ -251,7 +277,14 @@ function createOverlayLayers(map) {
                 return null; // don't draw marker at low zoom
             }
 
-            const status = geojson.properties.shelter_status_code;
+            const shelterId = geojson.properties.shelter_id || geojson.properties.OBJECTID;
+            let status = geojson.properties.shelter_status_code;
+
+            // Check for override
+            if (shelterStatusOverrides[shelterId]) {
+                status = shelterStatusOverrides[shelterId];
+            }
+
             let markerOptions;
     
             if (status === "OPEN") {
@@ -277,18 +310,16 @@ function createOverlayLayers(map) {
         onEachFeature: function (feature, layer) {
             const props = feature.properties;
 
-            // Attach a test attribute to the SVG element for automation
-            layer.on('add', function () {
-                const el = layer.getElement();
-                if (el) {
-                    // ✅ Add 'shelter-marker' class while preserving existing classes
-                    const existingClass = el.getAttribute('class') || '';
-                    el.setAttribute('class', `${existingClass} shelter-marker`.trim());
-                    el.setAttribute('data-type', 'shelter'); // Optional: keep if useful elsewhere
-                    el.classList.add('shelter-marker');
-                }
-            });
+            //Extract shelter ID:
+            const shelterId = props.shelter_id || props.OBJECTID;
 
+            // Check for override status (fallback to original)
+            let status = props.shelter_status_code;
+            if (shelterStatusOverrides[shelterId]) {
+                status = shelterStatusOverrides[shelterId];
+            }
+
+            // Build popup content
             let petAccommodations = "Not listed – call ahead";
             if (props.pet_accommodations_desc === " ") {
                 petAccommodations = "Pet Accommodations: Unknown";
@@ -296,7 +327,7 @@ function createOverlayLayers(map) {
                 petAccommodations = props.pet_accommodations_desc;
             }
 
-            const popup = `
+            let popup = `
                 <strong>${props.shelter_name || "Unnamed Shelter"}</strong><br>
                 Address: ${props.address_1 || "Unknown"}<br>
                 City: ${props.city || "N/A"}<br>
@@ -306,13 +337,34 @@ function createOverlayLayers(map) {
                 Wheelchair Accessible: ${props.wheelchair_accessible === 'Y' ? "Yes" : "No"}<br>
                 Pet Accommodations: ${petAccommodations}<br>
                 Generator Onsite: ${props.generator_onsite === 'Y' ? "Yes" : "No"}<br>
-                Status: ${props.shelter_status_code || "N/A"}
+                Status: <strong>${status}</strong><br>
             `;
 
+            // 👮 Add toggle button only if user is an admin
+            if (window.isAdmin) {
+                popup += `
+                    <button class="toggle-shelter-status-btn" data-id="${shelterId}">
+                        ${status === "OPEN" ? "Mark as CLOSED" : "Mark as OPEN"}
+                    </button>
+                `;
+            }
+
+            // Bind popup
             layer.bindPopup(popup);
+
+            // Tag marker in DOM for automation/testing (optional)
+            layer.on('add', function () {
+                const el = layer.getElement();
+                if (el) {
+                    const existingClass = el.getAttribute('class') || '';
+                    el.setAttribute('class', `${existingClass} shelter-marker`.trim());
+                    el.setAttribute('data-type', 'shelter');
+                }
+            });
+
+            // Add to cluster group
             shelterClusterGroup.addLayer(layer);
         }
-
     });
 
     femaShelters.on('load', function (e) {
@@ -333,6 +385,82 @@ function createOverlayLayers(map) {
     //wildfireRiskLayer.addTo(map);
     //shelterClusterGroup.addTo(map);
     //femaShelters.addTo(map);
+
+document.addEventListener('click', function (e) {
+    const button = e.target.closest('.toggle-shelter-status-btn');
+    if (button) {
+        const shelterId = button.dataset.id;
+        const current = shelterStatusOverrides[shelterId] || "CLOSED";
+        const newStatus = current === "OPEN" ? "CLOSED" : "OPEN";
+
+        // Update override
+        shelterStatusOverrides[shelterId] = newStatus;
+
+        // ✅ Refresh popup and marker
+        femaShelters.eachFeature(function (layer) {
+            const props = layer.feature.properties;
+            const id = props.shelter_id || props.OBJECTID;
+
+            if (id == shelterId) {
+                // Rebuild the popup content
+                let status = newStatus;
+
+                let petAccommodations = "Not listed – call ahead";
+                if (props.pet_accommodations_desc === " ") {
+                    petAccommodations = "Pet Accommodations: Unknown";
+                } else if (props.pet_accommodations_desc) {
+                    petAccommodations = props.pet_accommodations_desc;
+                }
+
+                let popup = `
+                    <strong>${props.shelter_name || "Unnamed Shelter"}</strong><br>
+                    Address: ${props.address_1 || "Unknown"}<br>
+                    City: ${props.city || "N/A"}<br>
+                    Evacuation Capacity: ${props.evacuation_capacity || "N/A"}<br>
+                    Post-Impact Capacity: ${props.post_impact_capacity || "N/A"}<br>
+                    ADA Compliant: ${props.ada_compliant === 'Y' ? "Yes" : "No"}<br>
+                    Wheelchair Accessible: ${props.wheelchair_accessible === 'Y' ? "Yes" : "No"}<br>
+                    Pet Accommodations: ${petAccommodations}<br>
+                    Generator Onsite: ${props.generator_onsite === 'Y' ? "Yes" : "No"}<br>
+                    Status: <strong>${status}</strong><br>
+                `;
+
+                if (window.isAdmin) {
+                    popup += `
+                        <button class="toggle-shelter-status-btn" data-id="${id}">
+                            ${status === "OPEN" ? "Mark as CLOSED" : "Mark as OPEN"}
+                        </button>
+                    `;
+                }
+
+                // Re-bind the popup
+                layer.bindPopup(popup).openPopup();
+
+                // ✅ Update the marker style
+                const style = (status === "OPEN") ?
+                    {
+                        radius: 6,
+                        color: 'green',
+                        fillColor: 'lime',
+                        fillOpacity: 0.9,
+                        weight: 2
+                    } :
+                    {
+                        radius: 2,
+                        color: '#007bff',
+                        fillColor: '#007bff',
+                        fillOpacity: 0.6,
+                        weight: 1
+                    };
+
+                layer.setStyle(style);
+            }
+        });
+
+        console.log(`🔄 Shelter ${shelterId} status changed to ${newStatus}`);
+    }
+});
+
     
     return {
         "Emergency Shelters": femaShelters,
