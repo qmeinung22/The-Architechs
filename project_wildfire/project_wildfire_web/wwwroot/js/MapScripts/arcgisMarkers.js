@@ -16,6 +16,30 @@ export function addWildfireMarkers(layerGroup, flameIcon) {
         `;
         const marker = L.marker([fire.latitude, fire.longitude], { icon: flameIcon });
         marker.bindPopup(popupContent);
+        
+        marker.on('popupopen', function () {
+          const popupEl = marker.getPopup().getElement();
+          const btn = popupEl.querySelector(`.subscribe-btn[data-fire-id="${fire.uniqueFireIdentifier}"]`);
+          if (btn) {
+            btn.addEventListener('click', async () => {
+              try {
+                const response = await fetch(`/api/fireSub/${encodeURIComponent(fire.uniqueFireIdentifier)}`, {
+                  method: 'POST',
+                  credentials: 'include'  // include cookies/auth header
+                });
+                if (response.ok) {
+                  btn.textContent = 'Subscribed!';
+                  btn.disabled = true;
+                } else {
+                  alert('Subscription failed.');
+                }
+              } catch (err) {
+                console.error(err);
+                alert('An error occurred.');
+              }
+            });
+          }
+        });
         layerGroup.addLayer(marker);
       });
     })
