@@ -80,6 +80,9 @@ public class Program
 
         builder.Services.AddScoped<OpenAIService>();
 
+        //Active User
+        builder.Services.AddSingleton<IActiveUserTracker, ActiveUserTracker>();
+
 
 
         // Add services to the container.
