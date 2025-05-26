@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using project_wildfire_web.Models;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 public class NotificationBackgroundService : BackgroundService
 {
@@ -44,24 +45,24 @@ private async Task CheckUserLocationsAsync()
         var userLocations = await context.UserLocations.ToListAsync();
 
         foreach (var location in userLocations)
-        {
-            var lastSent = location.LastNotificationSent ?? DateTime.MinValue;
-            var intervalMinutes = location.TimeInterval == 0 ? 1 : location.TimeInterval * 60; // convert hours to minutes
-
-            if ((now - lastSent).TotalMinutes >= intervalMinutes)
             {
-                var identityUser = await userManager.FindByIdAsync(location.UserId);
+                var lastSent = location.LastNotificationSent ?? DateTime.MinValue;
+                var intervalMinutes = location.TimeInterval == 0 ? 1 : location.TimeInterval * 60; // convert hours to minutes
 
-                if (identityUser != null && !string.IsNullOrEmpty(identityUser.PhoneNumber))
+                if ((now - lastSent).TotalMinutes >= intervalMinutes)
                 {
-                    _logger.LogInformation($"Checking fires for user {identityUser.Id}, location {location.Title}");
+                    var identityUser = await userManager.FindByIdAsync(location.UserId);
 
-                    await notificationService.CheckFiresNearUserLocationsAsync(identityUser.Id, identityUser.PhoneNumber);
+                    if (identityUser != null && !string.IsNullOrEmpty(identityUser.PhoneNumber))
+                    {
+                        _logger.LogInformation($"Checking fires for user {identityUser.Id}, location {location.Title}");
 
-                    location.LastNotificationSent = now;
+                        await notificationService.CheckFiresNearUserLocationsAsync(identityUser.Id, identityUser.PhoneNumber);
+
+                        location.LastNotificationSent = now;
+                    }
                 }
             }
-        }
 
         await context.SaveChangesAsync();
     }

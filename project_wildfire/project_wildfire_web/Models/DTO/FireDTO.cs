@@ -9,7 +9,7 @@ namespace project_wildfire_web.Models.DTO
 {
 public partial class FireDTO
 {
-    public int FireId { get; set; } 
+    public string FireId { get; set; } 
 
     [Required]
     [Name("latitude")]

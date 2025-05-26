@@ -30,7 +30,6 @@ export function addFireMarkers(fireLayer, apiData) {
       fillOpacity: 0.8,
       className: "wildfire-marker"
     }).bindPopup(`
-      <strong>🔥 Wildfire!</strong><br>
       <strong>Radiative Power:</strong> ${power}<br>
       <strong>Latitude:</strong> ${fire.latitude.toFixed(5)}<br>
       <strong>Longitude:</strong> ${fire.longitude.toFixed(5)}
