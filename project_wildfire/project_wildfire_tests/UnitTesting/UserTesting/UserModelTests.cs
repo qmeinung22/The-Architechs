@@ -43,7 +43,7 @@ namespace project_wildfire_tests.UnitTests
         {
             // Arrange
             var user = new User();
-            var fire = new Fire { FireId = 1 };
+            var fire = new Fire { FireId = "1" };
             
             // Act
             user.Fires.Add(fire);
