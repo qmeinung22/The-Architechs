@@ -9,26 +9,31 @@ namespace project_wildfire_web.Models.DTO
 {
 public partial class FireDTO
 {
+    [Required]
+    [Name("FireId")]
     public string FireId { get; set; } 
 
-        [Required]
-        [Name("latitude")]
-        public decimal Latitude { get; set; }
+    [Required]
+    [Name("Latitude")]
+    public decimal Latitude { get; set; }
 
-        [Required]
-        [Name("longitude")]
-        public decimal Longitude { get; set; }
+    [Required]
+    [Name("Longitude")]
+    public decimal Longitude { get; set; }
 
-        //[Required]
-        //public Geometry Location { get; set; } = null!;
+    //[Required]
+    //public Geometry Location { get; set; } = null!;
+    [Required]
+    public DateTime StartDate { get; set; }
 
 
-        [Required]
-        [Name("frp")]
-        public decimal RadiativePower { get; set; }
+
+    [Required]
+    [Name("RadiativePower")]
+    public decimal? RadiativePower { get; set; }
 
         //For admin created fires
-         public bool IsAdminFire { get; set; } 
+    public bool IsAdminFire { get; set; } = false;
 
 }
 
@@ -63,10 +68,12 @@ namespace project_wildfire_web.ExtensionsMethods
         {
             return new Fire
             {
+                FireId = fireDTO.FireId,
                 Latitude = fireDTO.Latitude,
                 Longitude = fireDTO.Longitude,
                 RadiativePower = fireDTO.RadiativePower,
-                IsAdminFire = fireDTO.IsAdminFire
+                IsAdminFire = fireDTO.IsAdminFire,
+                StartDate = fireDTO.StartDate
             };
         }
     }
