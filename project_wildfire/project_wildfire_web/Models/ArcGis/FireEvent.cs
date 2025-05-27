@@ -15,16 +15,16 @@ namespace project_wildfire_web.Models.ArcGis
         public string Name { get; set; } = string.Empty;
 
         /// <summary>Latitude of the fire (WGS84).</summary>
-        public double Latitude { get; set; }
+        public decimal Latitude { get; set; }
 
         /// <summary>Longitude of the fire (WGS84).</summary>
-        public double Longitude { get; set; }
+        public decimal Longitude { get; set; }
 
         /// <summary>Total area burned in acres.</summary>
-        public double AcreageBurned { get; set; }
+        public decimal AcreageBurned { get; set; }
 
         /// <summary>Percentage of the fire contained (0–100).</summary>
-        public double PercentageContained { get; set; }
+        public decimal PercentageContained { get; set; }
 
         /// <summary>County of origin</summary>
         public string POOCounty { get; set; } = string.Empty;

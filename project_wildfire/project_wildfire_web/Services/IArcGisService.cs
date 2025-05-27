@@ -9,10 +9,8 @@ namespace project_wildfire_web.Services
     /// </summary>
     public interface IArcGisService
     {
-        /// <summary>
-        /// Retrieves all active wildfire events.
-        /// </summary>
-        //Task<List<FireEvent>> GetActiveWildfireEventsAsync();
+
+        Task<bool> FireExistsAsync(string uniqueFireId);
 
         /// <summary>
         /// Retrieves the details for a single wildfire by its OBJECTID.

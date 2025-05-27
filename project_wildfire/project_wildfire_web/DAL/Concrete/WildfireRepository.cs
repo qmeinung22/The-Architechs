@@ -15,22 +15,28 @@ namespace project_wildfire_web.DAL.Concrete
         public ICollection<Fire> GetWildfires()
         {
             return _context.Fires.ToList();
-        }
+        } 
 
-        public async Task AddWildfiresAsync(List<Fire> wildfires)
+      /*   public async Task AddWildfiresAsync(List<Fire> wildfires)
         {
             await _context.Fires.AddRangeAsync(wildfires);
             await _context.SaveChangesAsync();
-        }
+        } */
 
         public async Task ClearWildfiresAsync()
         {
-            _context.Fires.RemoveRange(_context.Fires); //this should remove all Fire records from the context db
-            await _context.SaveChangesAsync();  // commit the changes to the db 
-            await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Fires', RESEED, 0)");
+            // _context.Fires.RemoveRange(_context.Fires); //this should remove all Fire records from the context db
+            //await _context.SaveChangesAsync();  // commit the changes to the db 
+            //await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Fires', RESEED, 0)");
+            //var allFires = await _context.Fires.ToListAsync();
+            //_context.Fires.RemoveRange(allFires); //this should remove all Fire records from the context db
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM Fires");
+
+          //  await _context.SaveChangesAsync();
+
         }
 
-         public async Task<int> GetWildfireCountAsync()
+       /*   public async Task<int> GetWildfireCountAsync()
         {
             return await _context.Fires.CountAsync();
         }
@@ -39,6 +45,6 @@ namespace project_wildfire_web.DAL.Concrete
             return await _context.Fires.ToListAsync();
         }
 
-       
+        */
     }
 }

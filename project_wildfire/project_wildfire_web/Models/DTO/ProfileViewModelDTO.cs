@@ -33,7 +33,7 @@ namespace project_wildfire_web.Models.DTO
         public ICollection<UserLocationDTO> SavedLocations { get; set; } = new List<UserLocationDTO>();
 
         [Name("FireSubscriptions")]
-        public ICollection<FireDTO> FireSubscriptions { get; set; } = new List<FireDTO>();
+        public ICollection<Fire> FireSubscriptions { get; set; } = new List<Fire>();
 
     }
 }
@@ -51,14 +51,17 @@ namespace project_wildfire_web.ExtensionsMethods
             }
             return new ProfileViewModelDTO
             {
-            UserId = pvm.Id,
-            FirstName = pvm.FirstName,
-            LastName = pvm.LastName,
-            Email = pvm.Email,
-            PhoneNumber = pvm.PhoneNumber,
-            Location = pvm.Location,
-            SavedLocations = pvm.SavedLocations.Select(ul => ul.ToUserLocationDTO()).ToList(),
-            FireSubscriptions = pvm.FireSubscriptions.Select(f => f.ToFireDTO()).ToList()
+                UserId = pvm.Id,
+                FirstName = pvm.FirstName,
+                LastName = pvm.LastName,
+                Email = pvm.Email,
+                PhoneNumber = pvm.PhoneNumber,
+                Location = pvm.Location,
+                SavedLocations = pvm.SavedLocations.Select(ul => ul.ToUserLocationDTO()).ToList(),
+                // FireSubscriptions = pvm.FireSubscriptions.Select(f => f.ToFireDTO()).ToList()
+                // ...existing code...
+                FireSubscriptions = pvm.FireSubscriptions.ToList()
+// ...existing code...
             };
 
         }
@@ -82,7 +85,10 @@ namespace project_wildfire_web.ExtensionsMethods
                 PhoneNumber = pvm.PhoneNumber,
                 Location = pvm.Location,
                 SavedLocations = pvm.SavedLocations.Select(ul => ul.ToUserLocation()).ToList(),
-                FireSubscriptions = pvm.FireSubscriptions.Select(f => f.ToFire()).ToList()
+                //FireSubscriptions = pvm.FireSubscriptions.Select(f => f.ToFire()).ToList()
+                // ...existing code...
+                FireSubscriptions = pvm.FireSubscriptions.ToList()
+// ...existing code...
             };
         }
     }

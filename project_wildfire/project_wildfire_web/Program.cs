@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using project_wildfire_web.Services;
 using System.Net.Http.Headers;
+using project_wildfire_web.Services.Tracking;
 
 namespace project_wildfire_web;
 

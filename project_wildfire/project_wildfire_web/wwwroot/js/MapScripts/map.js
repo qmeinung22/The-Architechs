@@ -84,14 +84,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 `).openPopup();
 
                 // Save to DB
-                fetch('/api/AdminFire/Create', {
+                fetch('/api/AdminFire/createWildfire', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        latitude: lat,
-                        longitude: lng,
-                        radiativePower: simulatedPower,
-                        isAdminFire: true
+                        /* Latitude: lat,
+                        Longitude: lng,
+                        RadiativePower: simulatedPower,
+                        IsAdminFire: true */
+                        FireId: 'Simulated Fire',
+                        Name: 'Test Fire',
+                        Latitude: lat,
+                        Longitude: lng,
+                        AcreageBurned: 1000,
+                        PercentageContained: 50,
+                        POOCounty: 'Polk County',
+                        POOState: 'OR',
+                        FireCause: 'Simulated',
+                        StartDate: new Date().toISOString(),
+                        RadiativePower: simulatedPower,
+                        IsAdminFire: true
                     })
                 })
                 .then(response => {
@@ -101,7 +113,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(result => {
                     console.log("✅ Admin fire saved:", result);
 
-                    const fireId = result.fireId; // Use returned ID from DB
+                    //const fireId = result.fireId; // Use returned ID from DB
+                    const fireId = result.fireId || result.FireId;
                     window.fireMarkerMap?.set(fireId, fireMarker);
 
                     fireMarker.setPopupContent(`
@@ -149,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
         layerControl.addOverlay(currentWildfireLayer, "Current USA Wildfires");
         // Load today's fire data
         showSpinner();
-        fetch("/api/WildfireAPIController/getSavedFires")
+        fetch("/api/WildfireAPIController/fetchWildfires")
             .then(response => response.json())
             .then(data => {
                 fireLayer.clearLayers();
@@ -246,8 +259,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Fetch wildfire data for today's date automatically
     showSpinner();
-  //  fetch(`/api/WildfireAPIController/fetchWildfiresByDate?date=${dateInput.value}`)
-    fetch("/api/WildfireAPIController/getSavedFires")
+    //fetch(`/api/WildfireAPIController/fetchWildfiresByDate?date=${dateInput.value}`)
+     fetch("/api/WildfireAPIController/fetchWildfires")
         .then(response => response.json())
         .then(data => {
             fireLayer.clearLayers();
@@ -668,6 +681,26 @@ document.addEventListener('click', function (e) {
         }
     }
 });
+
+document.addEventListener('click', function(e){
+
+        // Unsubscribe logic
+        const unsubBtn = e.target.closest('.unsubscribe-btn');
+        if (unsubBtn) {
+            e.preventDefault();
+            const fireId = unsubBtn.getAttribute('data-fire-id');
+            fetch(`/api/fireSub/${fireId}`, {
+                method: 'DELETE'
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Unsubscribe failed');
+                // Remove the row from the table
+                const row = unsubBtn.closest('tr');
+                if (row) row.remove();
+            })
+            .catch(err => alert(err.message));
+        }
+    });
 
 async function initializeAqiLayer() {
     const aqiLayer = L.layerGroup();
