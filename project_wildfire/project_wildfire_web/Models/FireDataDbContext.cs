@@ -61,6 +61,7 @@ public partial class FireDataDbContext : DbContext
                 .HasConstraintName("FK_UserLocations_Users");
         });
         modelBuilder.Entity<UserFireSubscription>()
+            .ToTable("UserFireSubscription") 
             .HasKey(ufs => new { ufs.UserId, ufs.FireId });
 
         modelBuilder.Entity<UserFireSubscription>()

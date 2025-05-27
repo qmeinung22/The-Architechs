@@ -17,7 +17,7 @@ public class UserFireSubsRepository : IUserFireSubRepository
         }
     
     
-    public async Task SubscribeAsync(string userID, int fireId)
+    public async Task SubscribeAsync(string userID, string fireId)
         {
             if (!await IsSubscribedAsync(userID, fireId))
             {
@@ -37,12 +37,12 @@ public class UserFireSubsRepository : IUserFireSubRepository
             }
         }
 
-    public async Task<bool> IsSubscribedAsync(string userID, int FireID)
+    public async Task<bool> IsSubscribedAsync(string userID, string FireID)
     {
         return await _context.UserFireSubscriptions
             .AnyAsync(s => s.UserId == userID && s.FireId == FireID);
     }
-    public async Task UnsubscribeAsync(string userID, int FireID)
+    public async Task UnsubscribeAsync(string userID, string FireID)
     {
         var subscription = await _context.UserFireSubscriptions
             .FirstOrDefaultAsync(s => s.UserId == userID && s.FireId == FireID);

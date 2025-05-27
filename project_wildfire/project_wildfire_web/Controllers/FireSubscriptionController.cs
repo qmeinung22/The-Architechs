@@ -32,7 +32,7 @@ public class FireSubscriptionController : ControllerBase
        }
 
        [HttpPost("{fireId}")]
-       public async Task <IActionResult> Subscribe (int fireId)
+       public async Task <IActionResult> Subscribe (string fireId)
        {
             var userId = _userManager.GetUserId(User);
             await _userFireSubRepo.SubscribeAsync(userId,fireId);
@@ -40,7 +40,7 @@ public class FireSubscriptionController : ControllerBase
        }
 
        [HttpDelete("{fireId}")]
-       public async Task<IActionResult> Unsubscribe(int fireId)
+       public async Task<IActionResult> Unsubscribe(string fireId)
        {    
             var userId = _userManager.GetUserId(User);
             await _userFireSubRepo.UnsubscribeAsync(userId,fireId);

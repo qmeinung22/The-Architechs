@@ -39,7 +39,7 @@ namespace project_wildfire_web.Controllers
         }
 
         [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> DeleteFire(int id)
+        public async Task<IActionResult> DeleteFire(string id)
         {
             var fire = await _context.Fires.FindAsync(id);
             if (fire == null)

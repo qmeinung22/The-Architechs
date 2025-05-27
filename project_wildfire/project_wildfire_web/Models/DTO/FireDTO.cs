@@ -7,9 +7,9 @@ using project_wildfire_web.Models.DTO;
 
 namespace project_wildfire_web.Models.DTO
 {
-    public partial class FireDTO
-    {
-        public int FireId { get; set; }
+public partial class FireDTO
+{
+    public string FireId { get; set; } 
 
         [Required]
         [Name("latitude")]
