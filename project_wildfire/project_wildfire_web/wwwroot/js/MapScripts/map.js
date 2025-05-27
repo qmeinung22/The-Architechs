@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
         layerControl.addOverlay(currentWildfireLayer, "Current USA Wildfires");
         // Load today's fire data
         showSpinner();
-        fetch("/api/WildfireAPIController/getSavedFires")
+        fetch("/api/WildfireAPIController/fetchWildfires")
             .then(response => response.json())
             .then(data => {
                 fireLayer.clearLayers();
@@ -259,8 +259,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Fetch wildfire data for today's date automatically
     showSpinner();
-  //  fetch(`/api/WildfireAPIController/fetchWildfiresByDate?date=${dateInput.value}`)
-    fetch("/api/WildfireAPIController/getSavedFires")
+    //fetch(`/api/WildfireAPIController/fetchWildfiresByDate?date=${dateInput.value}`)
+     fetch("/api/WildfireAPIController/fetchWildfires")
         .then(response => response.json())
         .then(data => {
             fireLayer.clearLayers();
