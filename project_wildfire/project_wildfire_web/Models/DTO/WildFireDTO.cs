@@ -1,9 +1,15 @@
-﻿using NetTopologySuite.Geometries;
+using System.ComponentModel.DataAnnotations;
+using CsvHelper.Configuration.Attributes;
+using project_wildfire_web.Models;
+using project_wildfire_web.Models.DTO;
 
-namespace project_wildfire_web.Models;
 
-public partial class Fire
+
+namespace project_wildfire_web.Models.DTO;
+
+public class WildfireDTO
 {
+
     public string? FireId { get; set; }
     public string Name { get; set; }
     public decimal Latitude { get; set; }
@@ -17,9 +23,4 @@ public partial class Fire
     public decimal? RadiativePower { get; set; }
 
     public bool IsAdminFire { get; set; } = false;
-
-    //public Geometry? Polygon { get; set; }
-
-    public virtual ICollection<User> Users { get; set; } = new List<User>();
-    public virtual ICollection<UserFireSubscription> UserSubscriptions { get; set; } = new List<UserFireSubscription>();
 }

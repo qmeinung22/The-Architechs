@@ -10,6 +10,6 @@ public class FireDTOMap : ClassMap<FireDTO>
     {
         Map(m => m.Latitude).Name("latitude");
         Map(m => m.Longitude).Name("longitude");
-        Map(m => m.RadiativePower).Name("frp"); // NASA's Fire Radiative Power column
+        Map(m => m.FRP).Name("frp"); // NASA's Fire Radiative Power column
     }
 }

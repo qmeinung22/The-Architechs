@@ -1,7 +1,7 @@
 
 export function addFireMarkers(fireLayer, apiData) {
   apiData.forEach(fire => {
-    const power = fire.radiativePower;
+    const power = fire.frp;
 
     // Determine color based on radiative power
     let color = '';
@@ -33,7 +33,7 @@ export function addFireMarkers(fireLayer, apiData) {
 
   // Build popup content
   let popupContent = `
-  <strong>🔥 Wildfire!</strong><br>
+  <strong>Thermal Hotzone!</strong><br>
   <strong>Radiative Power:</strong> ${power}<br>
   <strong>Latitude:</strong> ${fire.latitude.toFixed(5)}<br>
   <strong>Longitude:</strong> ${fire.longitude.toFixed(5)}
@@ -49,12 +49,6 @@ if (fire.isAdminFire && window.isAdmin) {
   `;
 }
 
-// Show subscribe button for *everyone*, for *any fire*
-popupContent += `
-  <br><button class="subscribe-btn" data-fire-id="${fire.fireId}">
-    🔔 Subscribe to fire
-  </button>
-`;
 
 
   marker.bindPopup(popupContent);

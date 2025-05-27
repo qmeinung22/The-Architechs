@@ -1,6 +1,13 @@
-public interface IActiveUserTracker
+using System.Collections.Generic;
+
+namespace project_wildfire_web.Services.Tracking
 {
-    void AddUser(string userId);
-    void RemoveUser(string userId);
-    IReadOnlyCollection<string> GetActiveUserIds();
+
+    public interface IActiveUserTracker
+    {
+        void AddUser(string userId);
+        void RemoveUser(string userId);
+        IReadOnlyCollection<string> GetActiveUserIds();
+    }
+
 }

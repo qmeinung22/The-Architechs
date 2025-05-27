@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using project_wildfire_web.DAL.Concrete;
 using project_wildfire_web.Models;
 using project_wildfire_web.DAL.Abstract;
+using project_wildfire_web.Services.Tracking;
 
 namespace project_wildfire_web.Areas.Identity.Pages.Account
 {
