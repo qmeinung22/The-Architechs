@@ -1,4 +1,10 @@
 export function addWildfireMarkers(layerGroup, flameIcon) {
+    const adminFlameIcon = L.icon({
+    iconUrl: 'images/flame.png', // Use your alternative icon path
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32]
+  });
   fetch('/api/wildfires/getSavedFires')
     .then(response => response.json())
     .then(data => {
@@ -21,7 +27,9 @@ export function addWildfireMarkers(layerGroup, flameIcon) {
             </button>
           `;
         }
-        const marker = L.marker([fire.latitude, fire.longitude], { icon: flameIcon });
+        
+        const markerIcon = fire.isAdminFire ? adminFlameIcon : flameIcon;
+        const marker = L.marker([fire.latitude, fire.longitude], { icon: markerIcon });
         marker.bindPopup(popupContent);
         
         marker.on('popupopen', function () {
