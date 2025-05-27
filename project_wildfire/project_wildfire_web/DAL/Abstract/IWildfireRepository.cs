@@ -7,10 +7,10 @@ namespace project_wildfire_web.DAL.Abstract
     {
         ICollection<Fire> GetWildfires();
 
-        Task AddWildfiresAsync(List<Fire> wildfires);
+       // Task AddWildfiresAsync(List<Fire> wildfires);
         Task ClearWildfiresAsync();
-        Task<int> GetWildfireCountAsync();
-        Task<List<Fire>> GetAllFiresAsync();
+       // Task<int> GetWildfireCountAsync();
+       // Task<List<Fire>> GetAllFiresAsync();
 
 
     }

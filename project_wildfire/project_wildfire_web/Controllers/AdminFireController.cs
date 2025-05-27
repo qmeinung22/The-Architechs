@@ -18,7 +18,7 @@ namespace project_wildfire_web.Controllers
             _context = context;
         }
 
-        [HttpPost("Create")]
+/*         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] FireDTO fireDto)
         {
             if (!ModelState.IsValid)
@@ -39,7 +39,7 @@ namespace project_wildfire_web.Controllers
                 message = "🔥 Admin fire successfully saved.",
                 fireId = fireDto.FireId
             });
-        }
+        } */
 
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteFire(string id)

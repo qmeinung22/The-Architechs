@@ -38,11 +38,13 @@ public class NasaService : INasaService
             _logger.LogError("NASA FIRMS API key missing");
             return new List<FireDTO>(); // Return empty list instead of null
         }
+        var yesterday = DateTime.UtcNow.AddDays(-1).ToString("yyyy-MM-dd");
+
 
         //Code for modifying the year/month/day of wildfire occurences
         //Needs to be updated for filtering
         //string endpoint = $"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{apiKey}/VIIRS_SNPP_NRT/-130,40,-110,50/1/2025-03-02";
-        string endpoint = $"https://firms.modaps.eosdis.nasa.gov/api/country/csv/{apiKey}/VIIRS_SNPP_NRT/USA/1/2025-04-20";
+        string endpoint = $"https://firms.modaps.eosdis.nasa.gov/api/country/csv/{apiKey}/VIIRS_SNPP_NRT/USA/1/{yesterday}";
         //string endpoint = "https://firms.modaps.eosdis.nasa.gov/api/country/csv/ApiKeyHere/VIIRS_SNPP_NRT/PER/1/2025-04-20";
 
 

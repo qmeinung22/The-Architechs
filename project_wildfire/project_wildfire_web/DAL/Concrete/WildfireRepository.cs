@@ -15,13 +15,13 @@ namespace project_wildfire_web.DAL.Concrete
         public ICollection<Fire> GetWildfires()
         {
             return _context.Fires.ToList();
-        }
+        } 
 
-        public async Task AddWildfiresAsync(List<Fire> wildfires)
+      /*   public async Task AddWildfiresAsync(List<Fire> wildfires)
         {
             await _context.Fires.AddRangeAsync(wildfires);
             await _context.SaveChangesAsync();
-        }
+        } */
 
         public async Task ClearWildfiresAsync()
         {
@@ -36,7 +36,7 @@ namespace project_wildfire_web.DAL.Concrete
 
         }
 
-         public async Task<int> GetWildfireCountAsync()
+       /*   public async Task<int> GetWildfireCountAsync()
         {
             return await _context.Fires.CountAsync();
         }
@@ -45,6 +45,6 @@ namespace project_wildfire_web.DAL.Concrete
             return await _context.Fires.ToListAsync();
         }
 
-       
+        */
     }
 }

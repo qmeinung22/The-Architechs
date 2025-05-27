@@ -26,7 +26,7 @@ namespace project_wildfire_web.Controllers;
         }
 
         [HttpGet("fetchWildfires")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Fire>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FireDTO>))]
 
         public async Task<IActionResult> GetWildfiresAsync()
         {
@@ -54,7 +54,7 @@ namespace project_wildfire_web.Controllers;
             return Ok(fires);
         }
 
-
+/* 
         [HttpPost ("postData")]
         public async Task<IActionResult> SaveDataToDB()
         {
@@ -84,7 +84,7 @@ namespace project_wildfire_web.Controllers;
             }
 
             return StatusCode(500, "Failed to fetch wildfires from NASA API.");
-        }
+        } */
         
 
       /*   [HttpGet("getSavedFires")]
