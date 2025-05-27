@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using project_wildfire_web.Models;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 public class NotificationBackgroundService : BackgroundService
 {
@@ -61,9 +62,9 @@ private async Task CheckUserLocationsAsync()
             var lastSent = location.LastNotificationSent ?? DateTime.MinValue;
             var intervalMinutes = location.TimeInterval == 0 ? 1 : location.TimeInterval * 60;
 
-            if ((now - lastSent).TotalMinutes >= intervalMinutes)
-            {
-                var identityUser = await userManager.FindByIdAsync(location.UserId);
+                if ((now - lastSent).TotalMinutes >= intervalMinutes)
+                {
+                    var identityUser = await userManager.FindByIdAsync(location.UserId);
 
                 if (identityUser != null && !string.IsNullOrEmpty(identityUser.PhoneNumber))
                 {
