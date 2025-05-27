@@ -1,8 +1,10 @@
 
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using project_wildfire_web.Models.ArcGis;
 using project_wildfire_web.Models;
+using project_wildfire_web.Models.DTO;
 using project_wildfire_web.DAL.Abstract;
 using project_wildfire_web.Services;
 using System.Collections.Generic;
@@ -94,5 +96,33 @@ namespace Controllers
             await _dbContext.SaveChangesAsync();
             return Ok("Fire table populated with all FireEvent attributes.");
         }
+          [HttpGet("getSavedFires")]
+        public async Task<IActionResult> GetSavedFires()
+            {
+              
+                var fires = await _dbContext.Fires.ToListAsync();
+
+               var fireDTOs = fires.Select(f => new WildfireDTO {
+                    FireId = f.FireId,
+                    Name = f.Name ?? "",
+                    Latitude = f.Latitude,
+                    Longitude = f.Longitude,
+                    AcreageBurned = f.AcreageBurned ?? 0,
+                    PercentageContained = f.PercentageContained ?? 0,
+                    POOCounty = f.POOCounty ?? "",
+                    POOState = f.POOState ?? "",
+                    FireCause = f.FireCause ?? "",
+                    StartDate = f.StartDate,
+                    RadiativePower = f.RadiativePower ?? 0,
+                    IsAdminFire = f.IsAdminFire
+                }).ToList();
+                return Ok(fireDTOs);
+            }
+
+        /// <summary>
+        /// POST /api/wildfires/populate/{id}
+        /// Inserts or updates a single wildfire record based on its UniqueFireIdentifier.
+        /// </summary>
+
     }
 }

@@ -19,7 +19,7 @@ public sealed class AqiMarkersStepDefinitions
         WebDriverFactory.CreateDriver();
         _driver = WebDriverFactory.Driver;
 
-        _driver.Navigate().GoToUrl("http://localhost:5205"); // Adjust as needed
+        _driver.Navigate().GoToUrl("http://localhost:5205");
     }
 
     [AfterScenario]
