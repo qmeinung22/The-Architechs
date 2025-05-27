@@ -87,14 +87,14 @@ namespace project_wildfire_web.Controllers;
         }
         
 
-        [HttpGet("getSavedFires")]
+      /*   [HttpGet("getSavedFires")]
         public async Task<IActionResult> GetSavedFires()
         {
             var fires = await _wildfireRepository.GetAllFiresAsync();
 
-            var fireDTOs = fires.Select(f => f.ToFireDTO()).ToList(); // ✅ Map to DTO
+            var fireDTOs = fires.Select(f => f.ToFireDTO()).ToList();
             return Ok(fireDTOs);
-        }
+        } */
 
         /////Functiont to pull fire database
 

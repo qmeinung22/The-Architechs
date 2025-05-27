@@ -3,6 +3,7 @@ using project_wildfire_web.Models;
 using project_wildfire_web.Models.DTO;
 using project_wildfire_web.ExtensionsMethods;
 using project_wildfire_web.Models;
+using project_wildfire_web.Models.ArcGis;
 
 namespace project_wildfire_web.Controllers
 {
@@ -24,8 +25,10 @@ namespace project_wildfire_web.Controllers
                 return BadRequest("Invalid fire data");
 
             // Force IsAdminFire to true (just in case someone tries to spoof)
+            await DeleteFire(fireDto.FireId);
             fireDto.IsAdminFire = true;
-
+            var curTime = DateTime.UtcNow;
+            fireDto.StartDate = curTime;
             var fireEntity = fireDto.ToFire();
 
             _context.Fires.Add(fireEntity);
@@ -34,7 +37,7 @@ namespace project_wildfire_web.Controllers
             return Ok(new
             {
                 message = "🔥 Admin fire successfully saved.",
-                fireId = fireEntity.FireId
+                fireId = fireDto.FireId
             });
         }
 
@@ -67,6 +70,46 @@ namespace project_wildfire_web.Controllers
             }
 
             return Ok(new { message = "Fire deleted successfully." });
+        }
+
+        [HttpPost("createWildfire")]
+        public async Task<IActionResult> CreateFire([FromBody] WildfireDTO fire)
+        {
+            if (fire == null || string.IsNullOrEmpty(fire.FireId))
+                return BadRequest("Invalid fire data.");
+
+            var existing = await _context.Fires.FindAsync(fire.FireId);
+            if (existing != null)
+                return Conflict($"Fire with ID '{fire.FireId}' already exists.");
+            var fireEntity = new Fire
+            {
+                FireId = fire.FireId,
+                Name = fire.Name,
+                Latitude = fire.Latitude,
+                Longitude = fire.Longitude,
+                AcreageBurned = fire.AcreageBurned,
+                PercentageContained = fire.PercentageContained,
+                POOCounty = fire.POOCounty,
+                POOState = fire.POOState,
+                FireCause = fire.FireCause,
+                StartDate = fire.StartDate,
+                RadiativePower = fire.RadiativePower,
+                IsAdminFire = fire.IsAdminFire
+            };
+
+            _context.Fires.Add(fireEntity);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = $"Fire '{fire.FireId}' created." });
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetFireById(string id)
+        {
+            var fire = await _context.Fires.FindAsync(id);
+            if (fire == null)
+                return NotFound($"Wildfire '{id}' not found in the database.");
+
+            return Ok(fire);
         }
 
     }
