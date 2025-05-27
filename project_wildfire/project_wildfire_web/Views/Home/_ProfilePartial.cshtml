@@ -264,9 +264,13 @@
                                                 <td>@fire.POOCounty</td>
                                                 <td>@fire.POOState</td>
                                                 <td>Active</td>
-                                               @*  <td>@fire.StartDate.ToString("g")</td>
-                                                <td>@fire.AcreageBurned.ToString("N0")</td>
-                                                <td>@fire.PercentageContained.ToString("N1")%</td> *@
+                                                <td>
+                                                    @(fire.StartDate.HasValue 
+                                                        ? fire.StartDate.Value.ToLocalTime().ToString("g") 
+                                                        : "N/A")
+                                                </td>                                                
+                                                <td>@fire.AcreageBurned</td>
+                                                <td>@fire.PercentageContained %</td>
                                                 <td>
         
                                               <button class="btn btn-sm btn-danger unsubscribe-btn" data-fire-id="@fire.FireId">

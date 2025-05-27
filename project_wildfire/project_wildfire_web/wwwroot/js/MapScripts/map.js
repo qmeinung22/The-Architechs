@@ -113,7 +113,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(result => {
                     console.log("✅ Admin fire saved:", result);
 
-                    const fireId = result.fireId; // Use returned ID from DB
+                    //const fireId = result.fireId; // Use returned ID from DB
+                    const fireId = result.fireId || result.FireId;
                     window.fireMarkerMap?.set(fireId, fireMarker);
 
                     fireMarker.setPopupContent(`
