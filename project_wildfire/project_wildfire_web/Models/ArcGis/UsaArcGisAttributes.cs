@@ -10,7 +10,7 @@ public class UsaArcGisAttributes
             public string IncidentName { get; set; } = string.Empty;
 
             [JsonPropertyName("PercentContained")]
-            public double? PercentContained { get; set; }
+            public decimal? PercentContained { get; set; }
 
             [JsonPropertyName("OBJECTID")]
             public int ObjectId { get; set; }
@@ -22,7 +22,7 @@ public class UsaArcGisAttributes
             public long? FireDiscoveryDateTime { get; set; }
 
             [JsonPropertyName("DiscoveryAcres")]
-            public double? DiscoveryAcres { get; set; }
+            public decimal? DiscoveryAcres { get; set; }
 
             [JsonPropertyName("POOCounty")]
             public string? POOCounty { get; set; }

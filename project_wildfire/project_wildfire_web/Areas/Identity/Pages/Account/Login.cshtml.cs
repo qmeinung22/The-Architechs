@@ -25,11 +25,13 @@ namespace project_wildfire_web.Areas.Identity.Pages.Account
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
         private readonly IUserRepository _userRepository;
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, IUserRepository userRepository)
+        private readonly IActiveUserTracker _activeUserTracker;
+        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, IUserRepository userRepository, IActiveUserTracker activeUserTracker)
         {
             _signInManager = signInManager;
             _logger = logger;
             _userRepository = userRepository;
+            _activeUserTracker = activeUserTracker;
         }
 
         /// <summary>
@@ -105,70 +107,63 @@ namespace project_wildfire_web.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+       public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+{
+    returnUrl ??= Url.Content("~/");
+
+    ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+    if (ModelState.IsValid)
+    {
+        var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        if (result.Succeeded)
         {
-            returnUrl ??= Url.Content("~/");
-
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
-            if (ModelState.IsValid)
+            // ✅ Find user once
+            var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
+            if (user != null)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                // Also loads up the User Preference settings from previous session.
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-                if (result.Succeeded)
+                // ✅ Mark user as active
+                _activeUserTracker.AddUser(user.Id);
+                _logger.LogInformation("User added to active tracker: " + user.Id);
+
+                // ✅ Fetch preferences
+                var primaryUser = await _userRepository.GetUserByIdAsync(user.Id);
+                if (primaryUser != null)
                 {
-                    // ✅ Find user by email FIRST
-                    var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
-                    if (user != null)
-                    /*_logger.LogInformation("User logged in.");
-                    // ✅ Fetch user preferences from the database
-                    _logger.LogInformation($"Fetching preferences for user: {user.Id}");
-                     
-                    
-                        /*This section needs to be updated to work with userRepository (where preferences are held now)*/
+                    HttpContext.Session.SetString("FontSize", primaryUser.FontSize ?? "medium");
+                    HttpContext.Session.SetString("ContrastMode", primaryUser.ContrastMode.ToString());
+                    HttpContext.Session.SetString("TextToSpeech", primaryUser.TextToSpeech.ToString());
 
-                    //var preferences = await _userPreferencesRepository.GetUserPreferencesAsync(user.Id);
-                    _logger.LogInformation("Looking up primary user from DB using ID: " + user.Id);
-
-                    var primaryUser = await _userRepository.GetUserByIdAsync(user.Id);
-                    if (primaryUser != null)
-                    {
-                        HttpContext.Session.SetString("FontSize", primaryUser.FontSize ?? "medium");
-                        HttpContext.Session.SetString("ContrastMode", primaryUser.ContrastMode.ToString());
-                        HttpContext.Session.SetString("TextToSpeech", primaryUser.TextToSpeech.ToString());
-                        _logger.LogInformation($"Loaded Preferences - FontSize: {primaryUser.FontSize}, ContrastMode: {primaryUser.ContrastMode}, TextToSpeech: {primaryUser.TextToSpeech}");
-                        _logger.LogInformation("Session FontSize right after set: " + HttpContext.Session.GetString("FontSize"));
-                        _logger.LogInformation("Session saved values: FontSize=" + primaryUser.FontSize + ", ContrastMode=" + primaryUser.ContrastMode + ", TTS=" + primaryUser.TextToSpeech);
-                        _logger.LogInformation("Session check: " + HttpContext.Session.GetString("FontSize"));
-
-                    }
-                    else
-                    {
-                        _logger.LogWarning($"No preferences found for user: {user.Id}");
-                    } //End of Commented Code
-
-                    return LocalRedirect(returnUrl);
-                }
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                }
-                if (result.IsLockedOut)
-                {
-                    _logger.LogWarning("User account locked out.");
-                    return RedirectToPage("./Lockout");
+                    _logger.LogInformation($"Loaded Preferences - FontSize: {primaryUser.FontSize}, ContrastMode: {primaryUser.ContrastMode}, TextToSpeech: {primaryUser.TextToSpeech}");
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return Page();
+                    _logger.LogWarning($"No preferences found for user: {user.Id}");
                 }
             }
 
-            // If we got this far, something failed, redisplay form
+            return LocalRedirect(returnUrl);
+        }
+
+        if (result.RequiresTwoFactor)
+        {
+            return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+        }
+        if (result.IsLockedOut)
+        {
+            _logger.LogWarning("User account locked out.");
+            return RedirectToPage("./Lockout");
+        }
+        else
+        {
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             return Page();
         }
+    }
+
+    // If we got this far, something failed, redisplay form
+    return Page();
+}
+
     }
 }

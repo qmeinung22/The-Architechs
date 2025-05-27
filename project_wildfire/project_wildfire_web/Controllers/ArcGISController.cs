@@ -2,6 +2,8 @@
 
 using Microsoft.AspNetCore.Mvc;
 using project_wildfire_web.Models.ArcGis;
+using project_wildfire_web.Models;
+using project_wildfire_web.DAL.Abstract;
 using project_wildfire_web.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,10 +15,17 @@ namespace Controllers
     public class ArcGISController : ControllerBase
     {
         private readonly IArcGisService _arcGisService;
+        private readonly FireDataDbContext _dbContext;
+        private readonly IWildfireRepository _wildfireRepository;
 
-        public ArcGISController(IArcGisService arcGisService)
+
+        public ArcGISController(IArcGisService arcGisService, FireDataDbContext dbContext, IWildfireRepository wildfireRepository)
         {
             _arcGisService = arcGisService;
+            _dbContext = dbContext;
+            _wildfireRepository = wildfireRepository;
+
+
         }
 
         /// <summary>
@@ -30,17 +39,60 @@ namespace Controllers
             return Ok(fires);
         }
 
-        /// <summary>
-        /// GET /api/wildfires/{id}
-        /// Returns details for a specific wildfire by its OBJECTID.
-        /// </summary>
-    /*     [HttpGet("{id}")]
-        public async Task<ActionResult<FireEvent>> GetWildfireById(string id)
+        [HttpGet("exists/{uniqueId}")]
+        public async Task<ActionResult<bool>> Exists(string uniqueId)
         {
-            var fire = await _arcGisService.GetEventDetailsAsync(id);
-            if (fire == null)
-                return NotFound();
-            return Ok(fire);
-        } */
+
+            bool isActive = await _arcGisService.FireExistsAsync(uniqueId);
+            return Ok(isActive);
+        }
+
+        [HttpPost("populate")]
+        public async Task<IActionResult> PopulateFires()
+        {
+            await _wildfireRepository.ClearWildfiresAsync();
+
+            var fireEvents = await _arcGisService.GetUsaWildfiresAsync();
+
+            foreach (var fireEvent in fireEvents)
+            {
+                var fire = new Fire
+                {
+                    FireId = fireEvent.UniqueFireIdentifier,
+                    Name = fireEvent.Name,
+                    Latitude = fireEvent.Latitude,
+                    Longitude = fireEvent.Longitude,
+                    AcreageBurned = fireEvent.AcreageBurned,
+                    PercentageContained = fireEvent.PercentageContained,
+                    POOCounty = fireEvent.POOCounty,
+                    POOState = fireEvent.POOState,
+                    FireCause = fireEvent.FireCause,
+                    StartDate = fireEvent.StartDate
+                    // RadiativePower can be set if you have a mapping for it
+                };
+
+                var existing = await _dbContext.Fires.FindAsync(fire.FireId);
+                if (existing == null)
+                {
+                    _dbContext.Fires.Add(fire);
+                }
+                else
+                {
+                    existing.Name = fire.Name;
+                    existing.Latitude = fire.Latitude;
+                    existing.Longitude = fire.Longitude;
+                    existing.AcreageBurned = fire.AcreageBurned;
+                    existing.PercentageContained = fire.PercentageContained;
+                    existing.POOCounty = fire.POOCounty;
+                    existing.POOState = fire.POOState;
+                    existing.FireCause = fire.FireCause;
+                    existing.StartDate = fire.StartDate;
+                    // Update RadiativePower if needed
+                }
+            }
+
+            await _dbContext.SaveChangesAsync();
+            return Ok("Fire table populated with all FireEvent attributes.");
+        }
     }
 }

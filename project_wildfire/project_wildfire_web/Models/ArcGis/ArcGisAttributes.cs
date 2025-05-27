@@ -12,26 +12,26 @@ public class ArcGisAttributes
     public string IncidentName { get; set; } = string.Empty;
 
     [JsonPropertyName("InitialLatitude")]
-    public double InitialLatitude { get; set; }
+    public decimal InitialLatitude { get; set; }
 
     [JsonPropertyName("InitialLongitude")]
-    public double InitialLongitude { get; set; }
+    public decimal InitialLongitude { get; set; }
 
     [JsonPropertyName("DiscoveryAcres")]
-    public double? DiscoveryAcres { get; set; }
+    public decimal? DiscoveryAcres { get; set; }
 
     [JsonPropertyName("FinalAcres")]
-    public double? FinalAcres { get; set; }
+    public decimal? FinalAcres { get; set; }
 
     [JsonPropertyName("FireDiscoveryDateTime")]
     public long? FireDiscoveryDateTime { get; set; }
 
     [JsonPropertyName("IncidentSize")]
-    public double? IncidentSize { get; set; }
+    public decimal? IncidentSize { get; set; }
 
     [JsonPropertyName("UniqueFireIdentifier")]
     public string? UniqueFireIdentifier { get; set; }
 
     [JsonPropertyName("PercentContained")]
-    public double? PercentContained { get; set; }
+    public decimal? PercentContained { get; set; }
 }

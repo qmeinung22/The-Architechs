@@ -6,8 +6,8 @@ namespace project_wildfire_web.Models.ArcGis;
 public class ArcGisGeometry
 {
     [JsonPropertyName("x")]
-    public double X { get; set; }
+    public decimal X { get; set; }
 
     [JsonPropertyName("y")]
-    public double Y { get; set; }
+    public decimal Y { get; set; }
 }
