@@ -1,5 +1,5 @@
 export function addWildfireMarkers(layerGroup, flameIcon) {
-  fetch('/api/wildfires')
+  fetch('/api/wildfires/getSavedFires')
     .then(response => response.json())
     .then(data => {
       data.forEach(fire => {

@@ -28,9 +28,11 @@ namespace project_wildfire_web.DAL.Concrete
             // _context.Fires.RemoveRange(_context.Fires); //this should remove all Fire records from the context db
             //await _context.SaveChangesAsync();  // commit the changes to the db 
             //await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('Fires', RESEED, 0)");
-            var allFires = await _context.Fires.ToListAsync();
-            _context.Fires.RemoveRange(allFires); //this should remove all Fire records from the context db
-            await _context.SaveChangesAsync();
+            //var allFires = await _context.Fires.ToListAsync();
+            //_context.Fires.RemoveRange(allFires); //this should remove all Fire records from the context db
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM Fires");
+
+          //  await _context.SaveChangesAsync();
 
         }
 
