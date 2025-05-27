@@ -4,7 +4,7 @@
 
 **Logo:** 
 
-![Logo](https://github.com/qmeinung22/The-Architechs/blob/main/media/architechs_logo.png?raw=true)
+![Logo](./Weeks_1-4/media/architechs_graphic_no-bg.png)
 
 ## Contributors 
 
