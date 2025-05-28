@@ -46,70 +46,7 @@
                 </div>
                 
                 <div class="row">
-                    <h4 class="mt-4"><u>Subscribed Fires</u></h4>
-                    <div class="container ml-1">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <td><u>ID</u></td>
-                                    <td><u>Name</u></td>
-                                    <td><u>POOCounty</u></td>
-                                    <td><u>POOState</u></td>
-                                    <td><u>Status</u></td>
-                                    <td><u>StartDate</u></td>
-                                    <td><u>Acres Burned</u></td>
-                                    <td><u>Percent Contained</u></td>
-                                    <td><u>Actions</u></td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    @if (Model.FireSubscriptions == null || !Model.FireSubscriptions.Any())
-                                    {
-                                        <td>No fire subscriptions.</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    }
-                                    else
-                                    {
-                                        @foreach (var fire in Model.FireSubscriptions)
-                                        {
-                                            <tr>
-                                                <td>
-                                                    <a href="#" class="fire-jump" data-lat="@fire.Latitude" data-lng="@fire.Longitude">
-                                                        @fire.FireId
-                                                    </a>
-                                                </td>
-                                                
-                                                <td>@fire.Name</td>
-                                                <td>@fire.POOCounty</td>
-                                                <td>@fire.POOState</td>
-                                                <td>Active</td>
-                                                <td>
-                                                    @(fire.StartDate.HasValue 
-                                                        ? fire.StartDate.Value.ToLocalTime().ToString("g") 
-                                                        : "N/A")
-                                                </td>                                                
-                                                <td>@fire.AcreageBurned</td>
-                                                <td>@fire.PercentageContained %</td>
-                                                <td>
-        
-                                              <button class="btn btn-sm btn-danger unsubscribe-btn" data-fire-id="@fire.FireId">
-                                                Unsubscribe
-                                              </button>
-                                            </td>
-                                            </tr>
-                                            
-                                        }
-                                    } 
-                                </tr>
-                                    
-                            </tbody>
-                        </table>
-                    </div>  
+                    <partial name="_FireSubPartial" model="Model.FireSubscriptions" /> 
                 </div>
             </div>  
         }        
@@ -121,29 +58,4 @@
 @section Scripts {
     <script src="~/js/ProfilePartial/savedLocations.js"></script>
     <script src="~/js/ProfilePartial/userInformation.js"></script>
-    <script>
-      document.addEventListener('click', function (e) {
-        if (e.target.matches('.unsubscribe-btn')) {
-          var btn = e.target;
-          var fireId = btn.getAttribute('data-fire-id');
-          fetch('/api/fireSub/' + encodeURIComponent(fireId), {
-            method: 'DELETE',
-            credentials: 'include'
-          })
-            .then(function (response) {
-              if (response.ok) {
-                // Remove the subscription row from the table
-                var row = btn.closest('tr');
-                if (row) row.remove();
-              } else {
-                alert('Failed to unsubscribe from fire ' + fireId);
-              }
-            })
-            .catch(function (err) {
-              console.error(err);
-              alert('Error unsubscribing from fire ' + fireId);
-            });
-        }
-      });
-    </script>
 }
