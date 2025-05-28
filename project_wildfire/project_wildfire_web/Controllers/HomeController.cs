@@ -54,14 +54,18 @@ public class HomeController : Controller
 
             var savedLocations = await _locationRepository.GetUserLocationsAsync(primaryUser.UserId);
             var subscribedFires = await _userFireSubRepo.GetFiresSubsAsync(primaryUser.UserId);
-
-            var profileViewModel = new ProfileViewModel
+            var userInfo = new UserInfo()
             {
-                Id = primaryUser.UserId,
+                UserId = authUser.Id,
                 FirstName = primaryUser.FirstName,
                 LastName = primaryUser.LastName,
                 Email = authUser.Email,
-                PhoneNumber = authUser.PhoneNumber,
+                PhoneNumber = authUser.PhoneNumber
+            }; 
+
+            var profileViewModel = new ProfileViewModel
+            {
+                UserInfo = userInfo,
                 SavedLocations = savedLocations,
                 FireSubscriptions = subscribedFires.ToList()
             };

@@ -15,13 +15,13 @@
             {
                 @:Profile
             }
-            else if (Model.FirstName == null && Model.LastName == null)
+            else if (Model.UserInfo.FirstName == null && Model.UserInfo.LastName == null)
             {
-                @Model.Email
+                @Model.UserInfo.Email
             }
             else
             {
-                @Model.FirstName@: @Model.LastName
+                @Model.UserInfo.FirstName@: @Model.UserInfo.LastName
             }
             
         </h2>
@@ -36,141 +36,8 @@
         else
         {
             <div class="container">
-                <div class="row justify-content-start pl-0">
-                    <a class="@ManageNavPages.IndexNavClass(ViewContext)" id="profile" href="/Identity/Account/Manage/ManageAccount">Account Settings</a>
-                </div>
-                <div class="row my-3">
-                    
-                    <div class="col-8">
-                        <div class="row">
-                            <div class="col-3">
-                                <h4><u>Information</u></h4>
-                            </div>
-                            <div class="col align-text-bottom">
-                                <a href="#" id="editButton">edit</a>
-                            </div>
-                        </div>
-                        <form>
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="firstNameInput">First Name</label>
-                                        <input id="firstNameInput" class="form-control" type="text" value="@Model.FirstName" readonly>
-                                    </div>
-                                    <div class="col">
-                                        <label for="lastNameInput">Last Name</label>
-                                        <input id="lastNameInput" class="form-control" type="text" value="@Model.LastName" readonly>
-                                    </div>
-                                </div>
-                                <div class="row mt-2">
-                                    <div class="col">
-                                        <label for="emailInput">Email</label>
-                                        <input id="emailInput" class="form-control" type="text" value="@Model.Email">
-                                    </div>
-                                   
-                                </div>
-                                <div class="row mt-2">
-                                    <div class="col">
-                                        <label for="phoneInput">Phone</label>
-                                        <input id="phoneInput" class="form-control" type="tel" value="@Model.PhoneNumber" readonly>
-                                    </div>
-                                </div>
-                                         
-                            </div>
-                                
-                        </form>
-                        
-                        
-                        @* <table class="table table-hover mt-3 align-middle">
-                            <tbody>
-                                <tr>
-                                    <td><b>NAME:</b></td>
-                                    <td><input id="firstNameInput" class="form-control" type="text" value="@Model.FirstName" readonly><input id="lastNameInput" class="form-control" type="text" value="@Model.LastName" readonly></td>
-                                    <td>
-                                        <div>
-                                            <button class="btn btn-link" id="nameEditSaveButton" onclick="toggleEdit('name')">
-                                                @if (Model.FirstName == null && Model.LastName == null)
-                                                { 
-                                                    @:add 
-                                                } else { 
-                                                    @:edit
-                                                }
-                                            </button>
-                                        </div>
-                                    </td>
-                                    
-                                </tr>
-                                <tr>
-                                    <td><b>EMAIL:</b></td>
-                                    <td><input id="emailInput" class="form-control" type="text" placeholder="@Model.Email" readonly></td>
-                                    <td>
-                                        <div>
-                                            <button class="btn btn-link" id="emailEditSaveButton" onclick="toggleEdit('email')">
-                                                <!-- Email should never be empty. It is required for registration -->
-                                            edit
-                                            </button>
-                                        </div>
-                                    </td>
-
-                                </tr>
-                                <tr>
-                                    <td><b>PHONE:</b></td>
-                                    <td id="usersPhone"><input class="form-control" type="text" placeholder="@Model.PhoneNumber" readonly></td>
-                                    <td>
-                                        <button class="btn btn-link" id="phoneEditSaveButton" onclick="toggleEdit('phone')">
-                                            @if (Model.PhoneNumber == null)
-                                            {
-                                                @:add
-                                            }
-                                            else
-                                            {
-                                                @:edit
-                                            }
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>    *@                     
-                    </div>
-                    @* <div class="col-4">
-                        <h5><u>Notifications</u></h5>
-                        <table class="table table-hover mt-3 align-middle">
-                            <tbody>
-                                <tr class="my-5">
-                                    <td id="notificationState"><u>Disabled:</u></td>
-                                    <td>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="notificationSwitch" disabled>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    
-                                </tr>
-                                <tr class="my-5">
-                                    <td><u>Email:</u></td>
-                                    <td>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="emailEnableSwitch" disabled>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    
-                                </tr>
-                                <tr class="my-5">
-                                    <td><u>SMS:</u></td>
-                                    <td>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="smsEnableSwitch" disabled>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    
-                                </tr>
-                            </tbody>
-                        </table>      
-                    </div> *@
-                    
-                </div>
+                <partial name="_UserInfoPartial" model="Model.UserInfo" />
+                
                 <div class="row">
                     <h4 class="mt-4"><u>Saved Locations</u></h4>
                     <div id="location-container" class="container ml-1">
