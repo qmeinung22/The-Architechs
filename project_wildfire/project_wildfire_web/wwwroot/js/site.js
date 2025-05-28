@@ -3,9 +3,15 @@
 
 let userId;
 
-document.addEventListener("DOMContentLoaded", function () {
+function assignUserId() {
     userId = document.body.dataset.id;
-});
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", assignUserId);
+} else {
+    assignUserId();
+}
 
 export function getUserId() {
     console.log("Sending  User ID:", userId);
