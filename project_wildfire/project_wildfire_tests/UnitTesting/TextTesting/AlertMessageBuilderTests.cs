@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System.Collections.Generic;
-
+//dotnet test --filter "FullyQualifiedName~BuildAlertMessage_OneFire_ReturnsCorrectMessage"
+//dotnet test --filter "FullyQualifiedName~BuildAlertMessage_MultipleFires_ReturnsCorrectMessage"
 [TestFixture]
 public class AlertMessageBuilderTests
 {
