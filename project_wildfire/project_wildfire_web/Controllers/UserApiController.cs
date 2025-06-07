@@ -31,11 +31,11 @@ public class UserApiController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> SaveModalEdits([FromBody]ProfileViewModel profileViewModel)
+    public async Task<IActionResult> SaveModalEdits([FromBody]UserInfo userInfo)
     {
         // Find auth and primary user records for the given ID
-        var user = await _userRepository.GetUserByIdAsync(profileViewModel.Id);
-        var authUser = await _userManager.FindByIdAsync(profileViewModel.Id);
+        var user = await _userRepository.GetUserByIdAsync(userInfo.UserId);
+        var authUser = await _userManager.FindByIdAsync(userInfo.UserId);
 
         // Null check
         if (user == null || authUser == null)
@@ -44,17 +44,17 @@ public class UserApiController : ControllerBase
         }
 
         // Update primary user record
-        user.FirstName = profileViewModel.FirstName;
-        user.LastName = profileViewModel.LastName;
+        user.FirstName = userInfo.FirstName;
+        user.LastName = userInfo.LastName;
 
         //update custom preferences record
-        user.FontSize = profileViewModel.FontSize ?? "medium"; //Added the .FontSize class Attribute 
-        user.ContrastMode = profileViewModel.ContrastMode;
-        user.TextToSpeech = profileViewModel.TextToSpeech;
+        user.FontSize = userInfo.FontSize ?? "medium"; //Added the .FontSize class Attribute 
+        user.ContrastMode = userInfo.ContrastMode;
+        user.TextToSpeech = userInfo.TextToSpeech;
 
         // Update auth user record
-        authUser.Email = profileViewModel.Email;
-        authUser.PhoneNumber = profileViewModel.PhoneNumber;
+        authUser.Email = userInfo.Email;
+        authUser.PhoneNumber = userInfo.PhoneNumber;
 
         // Save changes
         _userRepository.UpdateUser(user);

@@ -1,0 +1,48 @@
+@model project_wildfire_web.Models.DTO.UserInfoDTO
+
+@*  
+ This takes the user to Identity pages (not what we want)
+<div class="row justify-content-start pl-0">
+    <a class="@ManageNavPages.IndexNavClass(ViewContext)" id="profile" href="/Identity/Account/Manage/ManageAccount">Account Settings</a>
+</div>
+*@
+
+<div class="container">
+    <div class="row">
+        <div class="col-3">
+            <h4><u>Information</u></h4>
+        </div>
+        <div class="col align-text-bottom">
+            <a href="#" id="editButton">edit</a>
+        </div>
+    </div>
+    <form>
+        <div class="form-group">
+            <div class="row">
+                <div class="col">
+                    <label for="firstNameInput">First Name</label>
+                    <input id="firstNameInput" class="form-control" type="text" value="@Model.FirstName" readonly>
+                </div>
+                <div class="col">
+                    <label for="lastNameInput">Last Name</label>
+                    <input id="lastNameInput" class="form-control" type="text" value="@Model.LastName" readonly>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <label for="emailInput">Email</label>
+                    <input id="emailInput" class="form-control" type="text" value="@Model.Email">
+                </div>
+                
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <label for="phoneInput">Phone</label>
+                    <input id="phoneInput" class="form-control" type="tel" value="@Model.PhoneNumber" readonly>
+                </div>
+            </div>
+                        
+        </div>
+            
+    </form>
+</div>
