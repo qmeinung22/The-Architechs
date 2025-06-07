@@ -5,7 +5,7 @@ using OpenQA.Selenium.Support.UI;
 using project_wildfire_tests.BDDTesting.Drivers;
 using SeleniumExtras.WaitHelpers;
 using NUnit.Framework;
-
+//dotnet test --filter "FullyQualifiedName~AQIMarkersAreShownOnTheMap"
 namespace project_wildfire_tests.BDDTesting.StepDefinitions;
 
 [Binding]
@@ -31,7 +31,6 @@ public sealed class AqiMarkersStepDefinitions
     [Given(@"I am on the map page")]
     public void GivenIAmOnTheMapPage()
     {
-        // Navigation is already done in BeforeScenario, but this doesn't hurt.
         _driver.Navigate().GoToUrl("http://localhost:5205/");
         _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
     }
@@ -41,7 +40,7 @@ public void WhenTheAQILayerIsLoaded()
 {
     var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
 
-    // First hover to reveal the layer toggle panel
+    // hover to reveal the layer toggle panel
     var hoverElement = wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("leaflet-control-layers-toggle")));
     new Actions(_driver).MoveToElement(hoverElement).Click().Perform();
 

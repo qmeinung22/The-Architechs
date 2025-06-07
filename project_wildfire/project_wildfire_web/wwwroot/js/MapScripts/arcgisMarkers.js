@@ -33,6 +33,7 @@ export function addWildfireMarkers(layerGroup, flameIcon) {
         if (fire.isAdminFire) {
           // ✅ Restore admin fire to radiative-power circleMarker style
           marker = L.circle([fire.latitude, fire.longitude], {
+            
             radius: radius * 100,
             fillColor: getColor(power),
             color: getColor(power),
